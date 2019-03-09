@@ -105,12 +105,12 @@ exports.addCmd = rl => {
     .then(s => {
         return makeQuestion(rl,'Introduce una respuesta: ')
         .then(p=>{
-            log(s+""+p);
+            //log(s+""+p);
             return {question: s, answer: p};
         });
     })
     .then((quiz)=>{
-        log(quiz);
+        //log(quiz);
         return models.quiz.create(quiz);
         
     })
@@ -276,21 +276,34 @@ validateId(id)
  * @param rl Objeto readline usado para implementar el CLI.
  */
 exports.playCmd = rl => {
+    let quizzes;
     let quiz=[];
-
-    const quizzes= model.getAll();
-    quizzes.forEach(q=>quiz.push(q));
+    //quizzes=models.quiz.findAll();
+    //const quizzes= model.getAll();
+    //quizzes.forEach(q=>{quiz.push(q.quiz.question)});
+    //quizzes=models.quiz.findAll();
+    //log(quizzes);
+    
+    //let quiz=[];
+    //quizzes.forEach(quiz.push({question:quizzes.quiz.question,answer:quizzes.quiz.answer}));
+    //let quiz=[];
+    
+  //  quizzes=models.quiz.findAll();
+    //quizzes.forEach(q=>quiz.push({question: q.question, answer: q.answer}));
+    
+    
+    //log(quiz);
 
     let n=0; //numero de aciertos
 
     
-    const play1=()=>{
-
+    const play1=(quiz)=>{
+    
         let i=Math.floor((Math.random()) * (quiz.length-1));
 
-        log(quiz);
+        //log(quiz);
 
-        log(i);
+        //log(i);
         if(quiz.length==0){
                     log('No hay nada más que preguntar.');
                     log(`Fin del juego. Puntucion=${n}`);
@@ -304,7 +317,7 @@ exports.playCmd = rl => {
                 quiz.splice(i,1);
                 log(`CORRECTO - Lleva ${++n} aciertos.`)
                 condition=true;                
-                play1();
+                play1(quiz);
             }else{
                 log(`Incorrecto.`);
                 log(`Fin del juego. Puntucion=${n}`);
@@ -314,7 +327,30 @@ exports.playCmd = rl => {
         });
     }
 }
-play1();
+models.quiz.findAll()
+    .then(quizzes=>{
+        //log(quizzes);
+    quizzes.forEach((q)=>{quiz.push({question: q.question, answer: q.answer});});
+    
+    
+        log(quiz);
+    })
+    .then(()=>{
+        log(quiz);
+    })
+    .then(()=>play1(quiz))
+    
+    .catch(error=>{
+        errorlog(error.message);
+    })
+
+
+//play1();
+
+
+
+
+
 
 };
 
