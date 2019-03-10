@@ -247,15 +247,23 @@ validateId(id)
     return models.quiz.findById(id);
 })
 .then(quiz=>{
+    
+    if( quiz===null){
+        throw new Error("No existe quiz para el id pasado");
+    }else{
     log(quiz.question,'red');
     return makeQuestion(rl,'Introduce una respuesta: ')
     .then(answer=>{
+        
+
         if((answer.toLowerCase().trim())===(quiz.answer.toLowerCase().trim())){
-            log('Correcto','green');
+                log('Correcto','green');
         }else{
-            log('Incorrecto','red');
+                log('Incorrecto','red');
         }
+        
     })
+    }   
 })
 .catch(Sequelize.ValidationError, error=>{
     errorlog('El quiz es erroneo');
@@ -276,23 +284,9 @@ validateId(id)
  * @param rl Objeto readline usado para implementar el CLI.
  */
 exports.playCmd = rl => {
-    let quizzes;
+    
     let quiz=[];
-    //quizzes=models.quiz.findAll();
-    //const quizzes= model.getAll();
-    //quizzes.forEach(q=>{quiz.push(q.quiz.question)});
-    //quizzes=models.quiz.findAll();
-    //log(quizzes);
-    
-    //let quiz=[];
-    //quizzes.forEach(quiz.push({question:quizzes.quiz.question,answer:quizzes.quiz.answer}));
-    //let quiz=[];
-    
-  //  quizzes=models.quiz.findAll();
-    //quizzes.forEach(q=>quiz.push({question: q.question, answer: q.answer}));
-    
-    
-    //log(quiz);
+
 
     let n=0; //numero de aciertos
 
@@ -300,10 +294,6 @@ exports.playCmd = rl => {
     const play1=(quiz)=>{
     
         let i=Math.floor((Math.random()) * (quiz.length-1));
-
-        //log(quiz);
-
-        //log(i);
         if(quiz.length==0){
                     log('No hay nada más que preguntar.');
                     log(`Fin del juego. Puntucion=${n}`);
@@ -328,21 +318,13 @@ exports.playCmd = rl => {
     }
 }
 models.quiz.findAll()
-    .then(quizzes=>{
-        //log(quizzes);
-    quizzes.forEach((q)=>{quiz.push({question: q.question, answer: q.answer});});
-    
-    
-        log(quiz);
-    })
-    .then(()=>{
-        log(quiz);
-    })
-    .then(()=>play1(quiz))
-    
-    .catch(error=>{
-        errorlog(error.message);
-    })
+.then(quizzes=>{       
+quizzes.forEach((q)=>{quiz.push({question: q.question, answer: q.answer});});
+})
+.then(()=>play1(quiz))
+.catch(error=>{
+    errorlog(error.message);
+})
 
 
 //play1();
